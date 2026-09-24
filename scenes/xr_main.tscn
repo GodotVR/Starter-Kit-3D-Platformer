@@ -24,6 +24,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_mfdrb")
 [node name="XROrigin3D" type="XROrigin3D" parent="." unique_id=827745128]
 
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D" unique_id=1564529638]
+current = true
 
 [node name="LeftXRController3D" type="XRController3D" parent="XROrigin3D" unique_id=1910286041]
 tracker = &"left_hand"
