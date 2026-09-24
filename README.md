@@ -2,7 +2,9 @@
 
 # Starter Kit 3D Platformer
 
-This package includes a basic template for a 3D platformer game in Godot 4.6. Includes features like;
+This package includes a basic template for a 3D platformer game in Godot 4.8, which has been ported to XR using the [Spatialize](https://github.com/GodotVR/spatialize) addon. 
+
+The base template includes features like;
 
 - Character controller (with double jump)
 - Collectable coins and falling platforms
@@ -11,9 +13,14 @@ This package includes a basic template for a 3D platformer game in Godot 4.6. In
 - Sprites and 3D Models _(CC0 licensed)_
 - Sound effects _(CC0 licensed)_
 
-### Screenshot
+**Note:** This project requires Godot 4.8 or later
 
-<p align="center"><img src="screenshots/screenshot.png"/></p>
+
+### Video of the sample
+
+<a href="https://drive.google.com/file/d/1r3as8OpnR5CAzlY4g2vnt7akIE4gRNot/view?usp=sharing">
+    <img src="screenshots/screenshot.png"/>
+</a>
 
 ### License
 
