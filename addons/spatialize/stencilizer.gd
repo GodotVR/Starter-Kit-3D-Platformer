@@ -91,9 +91,10 @@ func _update_gpu_particles(p_gpu_particles: GPUParticles3D) -> void:
 	for mesh in meshes:
 		if not mesh:
 			continue
-		var mat: Material = mesh.material
-		if mat and mat is StandardMaterial3D:
-			mesh.material = _get_stencilized_material(mat)
+		for i in range(mesh.get_surface_count()):
+			var mat: Material = mesh.surface_get_material(i)
+			if mat and mat is StandardMaterial3D:
+				mesh.surface_set_material(i, _get_stencilized_material(mat))
 
 
 func _get_stencilized_material(p_material: StandardMaterial3D) -> StandardMaterial3D:
@@ -133,6 +134,7 @@ func _restore_gpu_particles(p_gpu_particles: GPUParticles3D) -> void:
 	for mesh in meshes:
 		if not mesh:
 			continue
-		var mat: Material = mesh.material
-		if mat and _materials_inverse.has(mat):
-			mesh.material = _materials_inverse[mat as StandardMaterial3D]
+		for i in range(mesh.get_surface_count()):
+			var mat: Material = mesh.surface_get_material(i)
+			if mat and _materials_inverse.has(mat):
+				mesh.surface_set_material(i, _materials_inverse[mat as StandardMaterial3D])
