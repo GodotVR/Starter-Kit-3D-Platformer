@@ -16,10 +16,15 @@ var zoom = 10
 
 @onready var camera = $Camera
 
+var xr_origin: XROrigin3D = null
+
 func _ready():
-	
+	if OS.has_feature("xr"):
+		xr_origin = get_node_or_null("/root/XrMain/XROrigin3D")
+		# Reset the rotation
+		rotation_degrees = Vector3.ZERO
+
 	camera_rotation = rotation_degrees # Initial rotation
-	
 	pass
 
 func _physics_process(delta):
@@ -28,6 +33,8 @@ func _physics_process(delta):
 	
 	self.position = self.position.lerp(target.position, delta * 4)
 	rotation_degrees = rotation_degrees.lerp(camera_rotation, delta * 6)
+	if xr_origin:
+		xr_origin.rotation_degrees.y = rotation_degrees.y
 	
 	camera.position = camera.position.lerp(Vector3(0, 0, zoom), 8 * delta)
 	

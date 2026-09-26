@@ -16,12 +16,13 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Starter Kit 3D Platformer"
 config/tags=PackedStringArray("starterkit")
-run/main_scene="uid://gip61hpett2r"
+run/main_scene="uid://bqqgyqafm7xwp"
 config/quit_on_go_back=false
 config/features=PackedStringArray("4.8", "Forward Plus")
 boot_splash/bg_color=Color(0.92549, 0.92549, 0.960784, 1)
 boot_splash/image="res://splash-screen.png"
 config/icon="res://icon.png"
+run/main_scene.xr="uid://gip61hpett2r"
 
 [autoload]
 
@@ -377,7 +378,13 @@ openxr/enabled=true
 openxr/environment_blend_mode=2
 openxr/foveation_level=3
 openxr/foveation_dynamic=true
+openxr/startup_alert=false
+openxr/extensions/hand_tracking=true
+openxr/extensions/hand_tracking_unobstructed_data_source=true
+openxr/extensions/hand_tracking_controller_data_source=true
+openxr/extensions/hand_interaction_profile=true
 openxr/extensions/spatial_container/enabled=true
-openxr/extensions/spatial_container/bounds=Vector3(2, 1, 1)
+openxr/extensions/spatial_container/bounds=Vector3(0.5, 0.25, 0.5)
 shaders/enabled=true
 openxr/extensions/androidxr/spatial_trackpad_interaction=true
+openxr/startup_alert.xr=true

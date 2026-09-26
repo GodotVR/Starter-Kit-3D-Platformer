@@ -30,17 +30,25 @@ var xr_trackpad: XRController3D = null
 var xr_trackpad_touched := false
 var xr_trackpad_origin := Vector2(0, 0)
 
+var original_floor_snap_length = 0
+
 # Functions
 
 func _ready() -> void:
-	xr_trackpad =  get_node_or_null("/root/XrMain/XROrigin3D/SpatialTrackpad")
-	if not xr_trackpad:
-		printerr("FHK - Unable to retrieve xr trackpad")
-	else:
-		print("FHK - Connecting to xr trackpad...")
-		xr_trackpad.button_pressed.connect(_on_spatial_trackpad_button_pressed)
-		xr_trackpad.button_released.connect(_on_spatial_trackpad_button_released)
-		xr_trackpad.input_float_changed.connect(_on_spatial_trackpad_input_float_changed)
+	original_floor_snap_length = floor_snap_length
+	if OS.has_feature("xr"):
+		xr_trackpad =  get_node_or_null("/root/XrMain/XROrigin3D/SpatialTrackpad")
+		if not xr_trackpad:
+			printerr("Unable to retrieve xr trackpad")
+		else:
+			print("Connecting to xr trackpad...")
+			xr_trackpad.button_pressed.connect(_on_spatial_trackpad_button_pressed)
+			xr_trackpad.button_released.connect(_on_spatial_trackpad_button_released)
+			xr_trackpad.input_float_changed.connect(_on_spatial_trackpad_input_float_changed)
+
+
+func _get_accumulated_scale() -> Vector3:
+	return global_transform.basis.get_scale()
 
 func _on_spatial_trackpad_button_pressed(action_name: String) -> void:
 	if action_name == "primary_touch":
@@ -76,11 +84,16 @@ func _physics_process(delta):
 	handle_effects(delta)
 
 	# Movement
+	var accumulated_scale = _get_accumulated_scale()
+	
+	# It's necessary to scale the `floor_snap_length` to ensure proper floor collision detection.
+	floor_snap_length = original_floor_snap_length * accumulated_scale.x
 
 	var applied_velocity: Vector3
 
-	applied_velocity = velocity.lerp(movement_velocity, delta * 10)
-	applied_velocity.y = -gravity
+	var scaled_movement_velocity = movement_velocity * accumulated_scale
+	applied_velocity = velocity.lerp(scaled_movement_velocity, delta * 10)
+	applied_velocity.y = -gravity * accumulated_scale.x
 
 	velocity = applied_velocity
 	move_and_slide()
@@ -118,7 +131,7 @@ func handle_effects(delta):
 
 	if is_on_floor():
 		var horizontal_velocity = Vector2(velocity.x, velocity.z)
-		var speed_factor = horizontal_velocity.length() / movement_speed / delta
+		var speed_factor = horizontal_velocity.length() / movement_speed / delta / _get_accumulated_scale().x
 		if speed_factor > 0.05:
 			if animation.current_animation != "walk":
 				animation.play("walk", 0.1)
@@ -154,12 +167,12 @@ func handle_controls(delta):
 	input = input.rotated(Vector3.UP, view.rotation.y)
 	
 	if xr_trackpad and xr_trackpad_touched:
-			var current_pos = xr_trackpad.get_vector2("primary")
-			var delta_pos = current_pos - xr_trackpad_origin
-			if abs(delta_pos.x) >= TRACKPAD_DEADZONE:
-				input.x += 3 * delta_pos.x
-			if abs(delta_pos.y) >= TRACKPAD_DEADZONE:
-				input.z += 3 * delta_pos.y
+		var current_pos = xr_trackpad.get_vector2("primary")
+		var delta_pos = current_pos - xr_trackpad_origin
+		if abs(delta_pos.x) >= TRACKPAD_DEADZONE:
+			input.x += 3 * delta_pos.x
+		if abs(delta_pos.y) >= TRACKPAD_DEADZONE:
+			input.z += 3 * delta_pos.y
 
 	if input.length() > 1:
 		input = input.normalized()
