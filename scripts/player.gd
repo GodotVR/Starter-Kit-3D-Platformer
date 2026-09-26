@@ -54,10 +54,19 @@ func _on_spatial_trackpad_button_pressed(action_name: String) -> void:
 	if action_name == "primary_touch":
 		xr_trackpad_touched = true
 		xr_trackpad_origin = xr_trackpad.get_vector2("primary")
+	
+	if action_name == "secondary_touch":
+		# Disable to allow consumption of the scroll gesture in view.gd
+		xr_trackpad_touched = false
 
 func _on_spatial_trackpad_button_released(action_name: String) -> void:
 	if action_name == "primary_touch":
 		xr_trackpad_touched = false
+	
+	if action_name == "secondary_touch":
+		xr_trackpad_touched = xr_trackpad.is_button_pressed("primary_touch")
+		if xr_trackpad_touched:
+			xr_trackpad_origin = xr_trackpad.get_vector2("primary")
 	
 	if action_name == "ax_button":
 		if jump_single or jump_double:
@@ -164,7 +173,6 @@ func handle_controls(delta):
 
 	input.x = Input.get_axis("move_left", "move_right")
 	input.z = Input.get_axis("move_forward", "move_back")
-	input = input.rotated(Vector3.UP, view.rotation.y)
 	
 	if xr_trackpad and xr_trackpad_touched:
 		var current_pos = xr_trackpad.get_vector2("primary")
@@ -174,6 +182,8 @@ func handle_controls(delta):
 		if abs(delta_pos.y) >= TRACKPAD_DEADZONE:
 			input.z += 3 * delta_pos.y
 
+	input = input.rotated(Vector3.UP, view.rotation.y)
+	
 	if input.length() > 1:
 		input = input.normalized()
 

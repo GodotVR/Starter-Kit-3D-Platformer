@@ -55,7 +55,7 @@ toplevel_paths = PackedStringArray("/user/hand/left", "/user/hand/right", "/user
 resource_name = "secondary"
 localized_name = "Secondary joystick/thumbstick/trackpad"
 action_type = 2
-toplevel_paths = PackedStringArray("/user/hand/left", "/user/hand/right")
+toplevel_paths = PackedStringArray("/user/spatial_trackpad")
 
 [sub_resource type="OpenXRAction" id="OpenXRAction_r5bl7"]
 resource_name = "secondary_click"
@@ -67,7 +67,7 @@ toplevel_paths = PackedStringArray("/user/hand/left", "/user/hand/right")
 resource_name = "secondary_touch"
 localized_name = "Secondary joystick/thumbstick/trackpad touching"
 action_type = 0
-toplevel_paths = PackedStringArray("/user/hand/left", "/user/hand/right")
+toplevel_paths = PackedStringArray("/user/spatial_trackpad")
 
 [sub_resource type="OpenXRAction" id="OpenXRAction_iphn4"]
 resource_name = "menu_button"
@@ -632,9 +632,17 @@ binding_path = "/user/spatial_trackpad/input/trackpad/click"
 action = SubResource("OpenXRAction_6ivru")
 binding_path = "/user/spatial_trackpad/input/trackpad/force"
 
+[sub_resource type="OpenXRIPBinding" id="OpenXRIPBinding_clvbf"]
+action = SubResource("OpenXRAction_oqnsu")
+binding_path = "/user/spatial_trackpad/input/scroll_gesture_android"
+
+[sub_resource type="OpenXRIPBinding" id="OpenXRIPBinding_5bppb"]
+action = SubResource("OpenXRAction_ytptc")
+binding_path = "/user/spatial_trackpad/input/scroll_gesture_android/activate_android"
+
 [sub_resource type="OpenXRInteractionProfile" id="OpenXRInteractionProfile_clvbf"]
 interaction_profile_path = "/interaction_profiles/android/spatial_trackpad_interaction_androidx1"
-bindings = [SubResource("OpenXRIPBinding_6ivru"), SubResource("OpenXRIPBinding_vfhwq"), SubResource("OpenXRIPBinding_5w03k"), SubResource("OpenXRIPBinding_typ1r")]
+bindings = [SubResource("OpenXRIPBinding_6ivru"), SubResource("OpenXRIPBinding_vfhwq"), SubResource("OpenXRIPBinding_5w03k"), SubResource("OpenXRIPBinding_typ1r"), SubResource("OpenXRIPBinding_clvbf"), SubResource("OpenXRIPBinding_5bppb")]
 
 [resource]
 action_sets = [SubResource("OpenXRActionSet_ngwcy")]

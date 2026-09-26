@@ -17,10 +17,18 @@ var zoom = 10
 @onready var camera = $Camera
 
 var xr_origin: XROrigin3D = null
+var xr_trackpad: XRController3D = null
+var xr_scroll_enabled = false
 
 func _ready():
 	if OS.has_feature("xr"):
 		xr_origin = get_node_or_null("/root/XrMain/XROrigin3D")
+		xr_trackpad = get_node_or_null("/root/XrMain/XROrigin3D/SpatialTrackpad")
+		if xr_trackpad:
+			print("Connecting to xr trackpad...")
+			xr_trackpad.button_pressed.connect(_on_spatial_trackpad_button_pressed)
+			xr_trackpad.button_released.connect(_on_spatial_trackpad_button_released)
+			
 		# Reset the rotation
 		rotation_degrees = Vector3.ZERO
 
@@ -51,6 +59,13 @@ func handle_input(delta):
 	input.y = Input.get_axis("camera_left", "camera_right")
 	input.x = Input.get_axis("camera_up", "camera_down")
 	
+	if xr_trackpad:
+		if xr_scroll_enabled:
+			var scroll_pos = xr_trackpad.get_vector2("secondary")
+			input.y += 3 * scroll_pos.y
+			input.x += 3 * scroll_pos.x
+		
+	
 	camera_rotation += input.limit_length(1.0) * rotation_speed * delta
 	camera_rotation.x = clamp(camera_rotation.x, -80, -10)
 	
@@ -58,3 +73,12 @@ func handle_input(delta):
 	
 	zoom += Input.get_axis("zoom_in", "zoom_out") * zoom_speed * delta
 	zoom = clamp(zoom, zoom_maximum, zoom_minimum)
+
+func _on_spatial_trackpad_button_pressed(action_name: String) -> void:
+	if action_name == "secondary_touch":
+		xr_scroll_enabled = true
+
+
+func _on_spatial_trackpad_button_released(action_name: String) -> void:
+	if action_name == "secondary_touch":
+		xr_scroll_enabled = false
