@@ -3,14 +3,20 @@ extends Node3D
 const USE_XR_ORIGIN_WORLD_SCALE = true
 
 @onready var xr_origin_3d: XROrigin3D = $XROrigin3D
+@onready var xr_camera_3d: XRCamera3D = $XROrigin3D/XRCamera3D
 @onready var left_controller_mesh: MeshInstance3D = $XROrigin3D/LeftXRController3D/LeftControllerMesh
 @onready var right_controller_mesh: MeshInstance3D = $XROrigin3D/RightXRController3D/RightControllerMesh
 
 @onready var game_world: Node3D = $GameWorld
 @onready var volume_portal: MeshInstance3D = $VolumePortal
 
+var max_volume_dimension = 0
 
 func _ready() -> void:
+	var volume_portal_mesh = volume_portal.mesh as BoxMesh
+	var volume_portal_size = volume_portal_mesh.size
+	max_volume_dimension = volume_portal_size[volume_portal_size.max_axis_index()]
+	
 	var xr_interface = XRServer.find_interface('OpenXR')
 	if xr_interface == null or not xr_interface.is_initialized():
 		printerr("Unable to access xr interface...")
@@ -25,6 +31,9 @@ func _ready() -> void:
 		_update_scale(bounds_mode, volume_bounds)
 	else:
 		printerr("Unable to access spatial container extension.")
+
+func _physics_process(_delta: float) -> void:
+	_update_xr_camera_far()
 
 func _on_spatial_container_bounds_changed(_spatial_container_rid: RID, _infinite_bounds: bool, bounds_mode: OpenXRSpatialContainerState.BoundsMode, updated_bounds: Vector3):
 	print("Spatial container bounds changed...")
@@ -56,3 +65,11 @@ func _update_xr_origin_world_scale(new_scale: Vector3) -> void:
 func _update_game_world_scale(new_scale: Vector3) -> void:
 	volume_portal.scale = new_scale
 	game_world.scale = new_scale
+
+func _update_xr_camera_far() -> void:
+	if not xr_camera_3d:
+		printerr("Unable to access xr camera")
+		return
+	
+	var camera_game_distance = xr_camera_3d.position.distance_to(game_world.position)
+	xr_camera_3d.far = max_volume_dimension + camera_game_distance
