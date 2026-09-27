@@ -29,6 +29,7 @@ const TRACKPAD_DEADZONE = 0.05
 var xr_trackpad: XRController3D = null
 var xr_trackpad_touched := false
 var xr_trackpad_origin := Vector2(0, 0)
+var xr_camera: XRCamera3D = null
 
 var original_floor_snap_length = 0
 
@@ -37,6 +38,7 @@ var original_floor_snap_length = 0
 func _ready() -> void:
 	original_floor_snap_length = floor_snap_length
 	if OS.has_feature("xr"):
+		xr_camera = get_node_or_null("/root/XrMain/XROrigin3D/XRCamera3D")
 		xr_trackpad =  get_node_or_null("/root/XrMain/XROrigin3D/SpatialTrackpad")
 		if not xr_trackpad:
 			printerr("Unable to retrieve xr trackpad")
@@ -183,6 +185,8 @@ func handle_controls(delta):
 			input.z += 3 * delta_pos.y
 
 	input = input.rotated(Vector3.UP, view.rotation.y)
+	if xr_camera:
+		input = input.rotated(Vector3.UP, xr_camera.rotation.y)
 	
 	if input.length() > 1:
 		input = input.normalized()
