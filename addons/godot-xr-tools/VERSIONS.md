@@ -1,3 +1,14 @@
+# 4.6.0
+- Fix dependency on staging system
+- Fix return value issues when XR Tools is used in Godot 4.7
+- Various style change and related cleanup changes to ensure more up to date GDScript syntax is used.
+- Fixed issue with highlighting causing errors
+- Fix issue with distance pickup
+- Fix double button presses (pointer for 2D viewport)
+- Added gizmos to help align interactable joints
+- Add check/setting for foveated rendering
+- Fix issues with applying world_scale
+
 # 4.5.0
 - Minimum Godot version changed to 4.4
 - Added UIDs for all classes
